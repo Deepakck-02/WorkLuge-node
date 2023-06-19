@@ -1,5 +1,6 @@
 const db = require("../models");
 const People = db.people;
+const User = db.user;
 
 
 // API for adding people
@@ -35,9 +36,9 @@ exports.addPeople = async (req, res) => {
 
         await newPeople.save();
 
-        res.status(201).json({ message: 'Successfully added', peopleId });
+        res.status(201).json({message: 'Successfully added', peopleId});
     } catch (error) {
-        res.status(500).send({ message: error.message });
+        res.status(500).send({message: error.message});
     }
 };
 
@@ -48,27 +49,52 @@ exports.listPeople = async (req, res) => {
 
         const people = await People.find();
 
-        res.status(200).json({ people });
+        res.status(200).json({people});
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({message: error.message});
     }
 };
+
+// API to get peoples of access level user
+exports.listUsers = async (req, res) => {
+    try {
+        console.log('called list all users');
+
+        const people = await People.aggregate([
+            {
+                $match: {accessLevel: 'User'}
+            },
+            {
+                $project: {
+                    _id: 0,
+                    peopleId: 1,
+                    name: 1
+                }
+            }
+        ]);
+
+        res.status(200).json(people);
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+};
+
 
 // API for listing people by peopleId
 exports.getPersonById = async (req, res) => {
     try {
         console.log('called list people by id');
 
-        const { peopleId } = req.params;
-        const person = await People.findOne({ peopleId });
+        const {peopleId} = req.params;
+        const person = await People.findOne({peopleId});
 
         if (!person) {
-            return res.status(404).json({ message: 'Person not found' });
+            return res.status(404).json({message: 'Person not found'});
         }
 
-        res.status(200).json({ person });
+        res.status(200).json({person});
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({message: error.message});
     }
 };
 
@@ -77,18 +103,18 @@ exports.updatePerson = async (req, res) => {
     try {
         console.log('called update people');
 
-        const { peopleId } = req.params;
+        const {peopleId} = req.params;
         const updatedPerson = req.body;
 
-        const person = await People.findOneAndUpdate({ peopleId }, updatedPerson, { new: true });
+        const person = await People.findOneAndUpdate({peopleId}, updatedPerson, {new: true});
 
         if (!person) {
-            return res.status(404).json({ message: 'Person not found' });
+            return res.status(404).json({message: 'Person not found'});
         }
 
-        res.status(200).json({ message: 'Person updated successfully', person });
+        res.status(200).json({message: 'Person updated successfully', person});
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({message: error.message});
     }
 };
 
@@ -97,24 +123,24 @@ exports.updatePersonStatus = async (req, res) => {
     try {
         console.log('called status update in people');
 
-        const { peopleId } = req.params;
-        const { isActive } = req.body;
+        const {peopleId} = req.params;
+        const {isActive} = req.body;
 
-        const updatedPerson = { isActive: isActive };
+        const updatedPerson = {isActive: isActive};
 
         const person = await People.findOneAndUpdate(
-            { peopleId },
+            {peopleId},
             updatedPerson,
-            { new: true }
+            {new: true}
         );
 
         if (!person) {
-            return res.status(404).json({ message: 'Person not found' });
+            return res.status(404).json({message: 'Person not found'});
         }
 
-        res.status(200).json({ message: 'Person status updated successfully', person });
+        res.status(200).json({message: 'Person status updated successfully', person});
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({message: error.message});
     }
 };
 
@@ -124,27 +150,24 @@ exports.deletePerson = async (req, res) => {
     try {
         console.log('called delete people');
 
-        const { peopleId } = req.params;
+        const {peopleId} = req.params;
 
-        const deletedPerson = await People.findOneAndDelete({ peopleId });
+        const deletedPerson = await People.findOneAndDelete({peopleId});
 
         if (!deletedPerson) {
-            return res.status(404).json({ message: 'Person not found' });
+            return res.status(404).json({message: 'Person not found'});
         }
 
-        res.status(200).json({ message: 'Person deleted successfully' });
+        res.status(200).json({message: 'Person deleted successfully'});
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({message: error.message});
     }
 };
 
 
-
-
-
 // Function to generate unique people ID
 async function generatePeopleId() {
-    const lastPeople = await People.findOne({}, {}, { sort: { peopleId: -1 } });
+    const lastPeople = await People.findOne({}, {}, {sort: {peopleId: -1}});
 
     if (lastPeople) {
         const lastId = parseInt(lastPeople.peopleId);

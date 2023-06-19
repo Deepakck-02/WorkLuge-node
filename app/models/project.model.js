@@ -26,8 +26,7 @@ const projectSchema = new mongoose.Schema(
         },
         portfolioId: {
             type: String,
-            ref: "Portfolio",
-            required: true,
+            ref: "Portfolio"
         },
         projectOwner: {
             _id: {

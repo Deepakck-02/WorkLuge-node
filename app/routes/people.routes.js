@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.route('/list-all').get(peopleController.listPeople);
 
+router.route('/list-users').get(peopleController.listUsers);
+
 router.route('/get-one/:peopleId').get(peopleController.getPersonById);
 
 router.route('/add').post(authenticateToken, checkUserRole('manager'), peopleController.addPeople);

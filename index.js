@@ -16,9 +16,9 @@ var corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({extended: true}));
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
@@ -33,12 +33,11 @@ app.get("/", (req, res) => {
     res.send('Welcome to workluge.....\n     note: while accessing restricted apis(for manager only) use header "Authorization: Bearer /your-jwt-token/"');
 });
 
-app.use('/api/auth',authRoute);
-app.use('/api/portfolio',portfolioRoute);
-app.use('/api/project',projectRoute);
-app.use('/api/task',taskRoute);
-app.use('/api/people',peopleRoute);
-
+app.use('/api/auth', authRoute);
+app.use('/api/portfolio', portfolioRoute);
+app.use('/api/project', projectRoute);
+app.use('/api/task', taskRoute);
+app.use('/api/people', peopleRoute);
 
 
 // Set up the MongoDB connection
