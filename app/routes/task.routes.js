@@ -4,6 +4,8 @@ const {authenticateToken, checkUserRole} = require("../middleware/jwtVerificatio
 
 const router = express.Router()
 
+router.route("/get-all-task").get(taskController.getAlltask );
+
 router.route("/list-all").get(taskController.listTasks);
 
 router.route("/add").post(authenticateToken, checkUserRole('manager'),taskController.addTask);

@@ -1,0 +1,95 @@
+<!-- portfolio.ejs -->
+<body>
+<h1>Portfolio</h1>
+<div class="card">
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+
+            <!-- Add more table headers here -->
+        </tr>
+        </thead>
+        <tbody>
+        <% response.forEach(portfolio => { %>
+            <tr>
+                <td><%= portfolio.portfolioId %></td>
+                <td><%= portfolio.portfolioName %></td>
+                <td><%= portfolio.portfolioDescription %></td>
+                <!-- Add more table cells here -->
+            </tr>
+        <% }); %>
+        </tbody>
+    </table>
+</div>
+</body>
+
+
+
+<style>
+
+    h1 {
+    color: white;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 80vh;
+        /*background-image: url('https://wallpaperaccess.com/full/249863.jpg');*/
+        /*background-image: url('https://wallpaperaccess.com/full/516102.jpg');*/
+        background-image: url('https://wallpaperaccess.com/full/516111.jpg');
+        /*background-image: url('https://wallpaperaccess.com/full/516199.jpg');*/
+        /*background-image: url('https://wallpaperaccess.com/full/516199.jpg');*/
+        background-size: cover;
+        /*overflow: hidden;*/
+    }
+
+    .card {
+        background-color: rgba(255, 255, 255, 0.13);
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.54);
+        backdrop-filter: blur(20px);
+        /*filter: blur(8px); !* Adjust the blur value as needed *!*/
+
+    }
+
+    table {
+        border-collapse: collapse;
+        border-top: 2px solid #adadad; /* Add a top border */
+        border-bottom: 2px solid #adadad;
+        width: 100%;
+    }
+
+    th, td {
+        color: white;
+        padding: 8px;
+        text-align: left;
+        border-right: 1px solid #adadad;
+    }
+
+    th:last-child,
+    td:last-child {
+        border-right: 2px solid #adadad; /* Remove the right border for the last column */
+    }
+
+    th:first-child,
+    td:first-child {
+        border-left: 2px solid #adadad;
+    }
+
+    th {
+        border-bottom: 2px solid #adadad;
+    }
+
+    td {
+        border-bottom: 1px solid #f2f2f2;
+    }
+</style>
+
+

@@ -7,7 +7,7 @@ const portfolioRoute = require("./app/routes/portfolio.routes");
 const projectRoute = require("./app/routes/project.routes");
 const taskRoute = require("./app/routes/task.routes");
 const peopleRoute = require("./app/routes/people.routes");
-
+app.set('view engine', 'ejs');
 
 var corsOptions = {
     origin: "*"
@@ -29,8 +29,11 @@ app.use(function (req, res, next) {
 const db = require("./app/models");
 
 // routes
+// app.get("/", (req, res) => {
+//     res.send('Welcome to workluge.....\n     note: while accessing restricted apis(for manager only) use header "Authorization: Bearer /your-jwt-token/"');
+// });
 app.get("/", (req, res) => {
-    res.send('Welcome to workluge.....\n     note: while accessing restricted apis(for manager only) use header "Authorization: Bearer /your-jwt-token/"');
+    res.render("home");
 });
 
 app.use('/api/auth', authRoute);

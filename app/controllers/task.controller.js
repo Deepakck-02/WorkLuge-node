@@ -102,7 +102,6 @@ exports.updateTaskStatus = async (req, res) => {
     }
 };
 
-
 // API for task deletion
 exports.deleteTask = async (req, res) => {
     try {
@@ -120,6 +119,20 @@ exports.deleteTask = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+
+
+exports.getAlltask = async (req, res) => {
+    try {
+        console.log('called list all tasks');
+        const tasks = await Task.find();
+        res.render('task', { tasks });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
 
 
 

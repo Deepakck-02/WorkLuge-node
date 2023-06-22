@@ -1,0 +1,90 @@
+<!-- tasks.ejs -->
+<body>
+<h1>Tasks</h1>
+<div class="card">
+<table>
+    <thead>
+    <tr>
+        <th>Task ID</th>
+        <th>Task Name</th>
+        <th>Status</th>
+        <th>Assignee</th>
+        <th>Created By</th>
+        <!-- Add more table headers here if needed -->
+    </tr>
+    </thead>
+    <tbody>
+    <% tasks.forEach(task => { %>
+        <tr>
+            <td><%= task.taskId %></td>
+            <td><%= task.taskName %></td>
+            <td><%= task.status %></td>
+            <td><%= task.assignee %></td>
+            <td><%= task.createdBy.name %></td>
+            <!-- Add more table cells here if needed -->
+        </tr>
+    <% }); %>
+    </tbody>
+</table>
+</div>
+</body>
+
+
+<style>
+    h1 {
+        color: white;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 80vh;
+        background-image: url('https://wallpaperaccess.com/full/249863.jpg');
+        background-size: cover;
+        /*overflow: hidden;*/
+    }
+
+    .card {
+        background-color: rgba(255, 255, 255, 0.03);
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.57);
+        backdrop-filter: blur(20px);
+        /*filter: blur(8px); !* Adjust the blur value as needed *!*/
+
+    }
+
+    table {
+        border-collapse: collapse;
+        border-top: 2px solid #adadad; /* Add a top border */
+        border-bottom: 2px solid #adadad;
+        width: 100%;
+    }
+
+    th, td {
+        color: #ffffff;
+        padding: 8px;
+        text-align: left;
+        border-right: 1px solid #adadad;
+    }
+
+    th:last-child,
+    td:last-child {
+        border-right: 2px solid #adadad; /* Remove the right border for the last column */
+    }
+
+    th:first-child,
+    td:first-child {
+        border-left: 2px solid #adadad;
+    }
+
+    th {
+        border-bottom: 2px solid #adadad;
+    }
+
+    td {
+        border-bottom: 1px solid #f2f2f2;
+    }
+</style>

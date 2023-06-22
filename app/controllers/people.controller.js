@@ -48,8 +48,21 @@ exports.listPeople = async (req, res) => {
         console.log('called list all people');
 
         const people = await People.find();
-
+        // res.render('people', { people }); // Render the people.ejs template with the people data
         res.status(200).json({people});
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+};
+
+// API for listing people as html
+exports.getAllPeople = async (req, res) => {
+    try {
+        console.log('called get all people to html');
+
+        const people = await People.find();
+        res.render('people', { people }); // Render the people.ejs template with the people data
+        // res.status(200).json({people});
     } catch (error) {
         res.status(500).json({message: error.message});
     }

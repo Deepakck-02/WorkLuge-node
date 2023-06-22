@@ -51,6 +51,17 @@ exports.getProjectList = async (req, res) => {
     }
 };
 
+exports.ProjectList = async (req, res) => {
+    try {
+        console.log('called list all project');
+        const projects = await Project.find();
+        // res.status(200).json(projects);
+        res.render('projects', { projects });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // API for update project
 exports.updateProject = async (req, res) => {
     try {

@@ -4,6 +4,8 @@ const {authenticateToken, checkUserRole} = require("../middleware/jwtVerificatio
 
 const router = express.Router();
 
+router.get('/get-all', peopleController.getAllPeople);
+
 router.route('/list-all').get(peopleController.listPeople);
 
 router.route('/list-users').get(peopleController.listUsers);

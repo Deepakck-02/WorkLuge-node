@@ -203,7 +203,27 @@ exports.deleteProjectIdsFromPortfolio = async (req, res) => {
 };
 
 
+exports.PortfolioList = async (req, res) => {
+    try {
+        console.log("called list portfolio");
 
+        const portfolios = await Portfolio.find();
+
+        const response = portfolios.map(portfolio => {
+            const { projects, ...portfolioData } = portfolio.toObject();
+            return {
+                ...portfolioData,
+                createdAt: { $date: portfolio.createdAt },
+                updatedAt: { $date: portfolio.updatedAt }
+            };
+        });
+
+        res.render('portfolio', { response });
+        // res.json(response);
+    } catch (error) {
+        res.status(500).send({ message: error.message });
+    }
+};
 
 
 // Function to generate unique portfolio ID
