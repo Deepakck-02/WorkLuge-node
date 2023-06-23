@@ -93,6 +93,31 @@ exports.listUsers = async (req, res) => {
 };
 
 
+// API to get peoples of access level manager
+exports.listManager = async (req, res) => {
+    try {
+        console.log('called list all users');
+
+        const people = await People.aggregate([
+            {
+                $match: {accessLevel: 'Manager'}
+            },
+            {
+                $project: {
+                    _id: 0,
+                    peopleId: 1,
+                    name: 1
+                }
+            }
+        ]);
+
+        res.status(200).json(people);
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+};
+
+
 // API for listing people by peopleId
 exports.getPersonById = async (req, res) => {
     try {

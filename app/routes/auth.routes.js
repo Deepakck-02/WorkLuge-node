@@ -4,12 +4,16 @@ const {authenticateToken, checkUserRole} = require("../middleware/jwtVerificatio
 
 const router = express.Router()
 
+// API to signup
 router.route("/register").post(controller.register);
 
+// API to login
 router.route("/login").post(controller.login);
 
+// API to get all users
 router.route("/get-all").get(controller.getAllUsers);
 
+// API to delete a user
 router.route("/delete/:userId").delete(authenticateToken, checkUserRole('manager'),controller.deleteUser);
 
 

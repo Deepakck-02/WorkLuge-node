@@ -10,6 +10,8 @@
             <th>Description</th>
             <th>Started</th>
             <th>Status</th>
+            <th>Portfolio Id</th>
+            <th>Portfolio Name</th>
             <!-- Add more table headers here -->
         </tr>
         </thead>
@@ -21,6 +23,8 @@
                 <td><%= project.projectDescription %></td>
                 <td><%= project.projectedStartDate %></td>
                 <td><%= project.status %></td>
+                <td><%= project.portfolioId %></td>
+                <td><%= project.portfolioName %></td>
                 <!-- Add more table cells here -->
             </tr>
         <% }); %>
@@ -41,7 +45,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 80vh;
+        /*height: 80vh;*/
         /*background-image: url('https://wallpaperaccess.com/full/249863.jpg');*/
         /*background-image: url('https://wallpaperaccess.com/full/516102.jpg');*/
         /*background-image: url('https://wallpaperaccess.com/full/516111.jpg');*/

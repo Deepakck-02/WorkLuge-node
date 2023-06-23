@@ -2,26 +2,89 @@ const db = require("../models");
 const Portfolio = db.portfolio;
 
 // API for Portfolio Listing
+
+// exports.getPortfolioList = async (req, res) => {
+//     try {
+//         console.log("called list portfolio");
+//
+//         const portfolios = await Portfolio.find();
+//
+//         const response = portfolios.map(portfolio => {
+//             const { projects, ...portfolioData } = portfolio.toObject();
+//             return {
+//                 ...portfolioData,
+//                 createdAt: { $date: portfolio.createdAt },
+//                 updatedAt: { $date: portfolio.updatedAt }
+//             };
+//         });
+//
+//         res.json(response);
+//     } catch (error) {
+//         res.status(500).send({ message: error.message });
+//     }
+// };
+
 exports.getPortfolioList = async (req, res) => {
     try {
         console.log("called list portfolio");
 
-        const portfolios = await Portfolio.find();
+        const portfolios = await Portfolio.aggregate([
+            {
+                $lookup: {
+                    from: "projects",
+                    localField: "projectId.ids",
+                    foreignField: "projectId",
+                    as: "projects"
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    portfolioId: 1,
+                    portfolioDescription: 1,
+                    status: 1,
+                    portfolioName: 1,
+                    createdAt: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S.%LZ", date: "$createdAt" } },
+                    updatedAt: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S.%LZ", date: "$updatedAt" } },
+                    projects: {
+                        $map: {
+                            input: "$projects",
+                            as: "project",
+                            in: { id: "$$project.projectId", name: "$$project.projectName" }
+                        }
+                    }
+                }
+            }
+        ]);
 
-        const response = portfolios.map(portfolio => {
-            const { projects, ...portfolioData } = portfolio.toObject();
-            return {
-                ...portfolioData,
-                createdAt: { $date: portfolio.createdAt },
-                updatedAt: { $date: portfolio.updatedAt }
-            };
-        });
-
-        res.json(response);
+        res.json(portfolios);
     } catch (error) {
         res.status(500).send({ message: error.message });
     }
 };
+
+// API for listing portfolio ids and name
+
+exports.getPortfolioNames = async (req, res) => {
+    try {
+        console.log("called list portfolio names");
+
+        const portfolios = await Portfolio.aggregate([
+            {
+                $project: {
+                    _id: 0,
+                    portfolioId: 1,
+                    portfolioName: 1
+                }
+            }
+        ]);
+
+        res.json(portfolios);
+    } catch (error) {
+        res.status(500).send({ message: error.message });
+    }
+};
+
 
 // API for get a single portfolio
 exports.getPortfolioById = async (req, res) => {
@@ -30,24 +93,45 @@ exports.getPortfolioById = async (req, res) => {
 
         const { portfolioId } = req.params;
 
-        const portfolio = await Portfolio.findOne({ portfolioId });
+        const portfolio = await Portfolio.aggregate([
+            { $match: { portfolioId } },
+            {
+                $lookup: {
+                    from: "projects",
+                    localField: "projectId.ids",
+                    foreignField: "projectId",
+                    as: "projects"
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    portfolioId: 1,
+                    portfolioDescription: 1,
+                    status: 1,
+                    portfolioName: 1,
+                    createdAt: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S.%LZ", date: "$createdAt" } },
+                    updatedAt: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S.%LZ", date: "$updatedAt" } },
+                    projects: {
+                        $map: {
+                            input: "$projects",
+                            as: "project",
+                            in: { id: "$$project.projectId", name: "$$project.projectName" }
+                        }
+                    }
+                }
+            }
+        ]);
 
-        if (!portfolio) {
+        if (portfolio.length === 0) {
             return res.status(404).json({ message: "Portfolio not found" });
         }
 
-        const portfolioData = {
-            ...portfolio.toObject(),
-            createdAt: { $date: portfolio.createdAt },
-            updatedAt: { $date: portfolio.updatedAt }
-        };
-
-        res.json(portfolioData);
+        res.json(portfolio[0]);
     } catch (error) {
         res.status(500).json({ message: "Failed to fetch portfolio", error: error.message });
     }
 };
-
 
 
 // API for Adding Portfolio
@@ -137,20 +221,39 @@ exports.updatePortfolioStatus = async (req, res) => {
 
 
 // API for Deleting Portfolio
+
+// exports.deletePortfolio = async (req, res) => {
+//     try {
+//         console.log("called delete portfolio");
+//         const { portfolioId } = req.params;
+//
+//         const portfolio = await Portfolio.findOneAndDelete({ portfolioId: portfolioId });
+//         if (!portfolio) {
+//             return res.status(404).json({ error: 'Portfolio not found' });
+//         }
+//         res.json({ message: "Deleted Successfully" });
+//     } catch (error) {
+//         res.status(500).send({ message: error.message });
+//     }
+// };
+
 exports.deletePortfolio = async (req, res) => {
     try {
-        console.log("called delete portfolio");
-        const { portfolioId } = req.params;
+        console.log("called delete portfolios");
+        const { portfolioIds } = req.body;
 
-        const portfolio = await Portfolio.findOneAndDelete({ portfolioId: portfolioId });
-        if (!portfolio) {
-            return res.status(404).json({ error: 'Portfolio not found' });
+        const portfolios = await Portfolio.deleteMany({ portfolioId: { $in: portfolioIds } });
+
+        if (portfolios.deletedCount === 0) {
+            return res.status(404).json({ error: 'Portfolios not found' });
         }
+
         res.json({ message: "Deleted Successfully" });
     } catch (error) {
         res.status(500).send({ message: error.message });
     }
 };
+
 
 
 // API for adding new project IDs to the portfolio
@@ -207,18 +310,36 @@ exports.PortfolioList = async (req, res) => {
     try {
         console.log("called list portfolio");
 
-        const portfolios = await Portfolio.find();
+        const portfolios = await Portfolio.aggregate([
+            {
+                $lookup: {
+                    from: "projects",
+                    localField: "projectId.ids",
+                    foreignField: "projectId",
+                    as: "projects"
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    portfolioId: 1,
+                    portfolioDescription: 1,
+                    status: 1,
+                    portfolioName: 1,
+                    createdAt: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S.%LZ", date: "$createdAt" } },
+                    updatedAt: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S.%LZ", date: "$updatedAt" } },
+                    projects: {
+                        $map: {
+                            input: "$projects",
+                            as: "project",
+                            in: { id: "$$project.projectId", name: "$$project.projectName" }
+                        }
+                    }
+                }
+            }
+        ]);
 
-        const response = portfolios.map(portfolio => {
-            const { projects, ...portfolioData } = portfolio.toObject();
-            return {
-                ...portfolioData,
-                createdAt: { $date: portfolio.createdAt },
-                updatedAt: { $date: portfolio.updatedAt }
-            };
-        });
-
-        res.render('portfolio', { response });
+        res.render('portfolio', { portfolios });
         // res.json(response);
     } catch (error) {
         res.status(500).send({ message: error.message });

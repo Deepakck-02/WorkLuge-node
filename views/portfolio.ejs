@@ -2,22 +2,27 @@
 <body>
 <h1>Portfolio</h1>
 <div class="card">
-    <table>
+    <table class="table-container">
         <thead>
         <tr>
             <th>ID</th>
             <th>Name</th>
             <th>Description</th>
-
+            <th>Projects</th>
             <!-- Add more table headers here -->
         </tr>
         </thead>
         <tbody>
-        <% response.forEach(portfolio => { %>
+        <% portfolios.forEach(portfolio => { %>
             <tr>
                 <td><%= portfolio.portfolioId %></td>
                 <td><%= portfolio.portfolioName %></td>
                 <td><%= portfolio.portfolioDescription %></td>
+                <td>
+                    <% portfolio.projects.forEach(project => { %>
+                        <div><%= project.name %></div>
+                    <% }); %>
+                </td>
                 <!-- Add more table cells here -->
             </tr>
         <% }); %>
@@ -25,6 +30,7 @@
     </table>
 </div>
 </body>
+
 
 
 
@@ -39,17 +45,18 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 80vh;
+        /*height: 80vh;*/
         /*background-image: url('https://wallpaperaccess.com/full/249863.jpg');*/
         /*background-image: url('https://wallpaperaccess.com/full/516102.jpg');*/
         background-image: url('https://wallpaperaccess.com/full/516111.jpg');
         /*background-image: url('https://wallpaperaccess.com/full/516199.jpg');*/
         /*background-image: url('https://wallpaperaccess.com/full/516199.jpg');*/
-        background-size: cover;
+        background-size: auto;
         /*overflow: hidden;*/
     }
 
     .card {
+        margin-top: 20px;
         background-color: rgba(255, 255, 255, 0.13);
         border-radius: 10px;
         padding: 20px;
@@ -58,6 +65,7 @@
         /*filter: blur(8px); !* Adjust the blur value as needed *!*/
 
     }
+
 
     table {
         border-collapse: collapse;

@@ -44,23 +44,105 @@ exports.addProject = async (req, res) => {
 exports.getProjectList = async (req, res) => {
     try {
         console.log('called list all project');
-        const projects = await Project.find();
+
+        const projects = await Project.aggregate([
+            {
+                $lookup: {
+                    from: "portfolios", // Replace "portfolios" with the actual collection name for portfolios
+                    localField: "portfolioId",
+                    foreignField: "portfolioId",
+                    as: "portfolio"
+                }
+            },
+            {
+                $unwind: "$portfolio"
+            },
+            {
+                $project: {
+                    _id: 1,
+                    projectId: 1,
+                    status: 1,
+                    projectName: 1,
+                    projectDescription: 1,
+                    projectDuration: 1,
+                    portfolioId: "$portfolio.portfolioId",
+                    portfolioName: "$portfolio.portfolioName",
+                    projectedStartDate: 1,
+                    projectedCompletionDate: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    __v: 1
+                }
+            }
+        ]);
+
         res.status(200).json(projects);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
+// API to list as html
 exports.ProjectList = async (req, res) => {
     try {
         console.log('called list all project');
-        const projects = await Project.find();
-        // res.status(200).json(projects);
+        const projects = await Project.aggregate([
+            {
+                $lookup: {
+                    from: "portfolios", // Replace "portfolios" with the actual collection name for portfolios
+                    localField: "portfolioId",
+                    foreignField: "portfolioId",
+                    as: "portfolio"
+                }
+            },
+            {
+                $unwind: "$portfolio"
+            },
+            {
+                $project: {
+                    _id: 1,
+                    projectId: 1,
+                    status: 1,
+                    projectName: 1,
+                    projectDescription: 1,
+                    projectDuration: 1,
+                    portfolioId: "$portfolio.portfolioId",
+                    portfolioName: "$portfolio.portfolioName",
+                    projectedStartDate: 1,
+                    projectedCompletionDate: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    __v: 1
+                }
+            }
+        ]);
         res.render('projects', { projects });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
+// API for get name and id
+exports.getProjectNames = async (req, res) => {
+    try {
+        console.log("called list project names");
+
+        const projects = await Project.aggregate([
+            {
+                $project: {
+                    _id: 0,
+                    projectId: 1,
+                    projectName: 1
+                }
+            }
+        ]);
+
+        res.json(projects);
+    } catch (error) {
+        res.status(500).send({ message: error.message });
+    }
+};
+
 
 // API for update project
 exports.updateProject = async (req, res) => {

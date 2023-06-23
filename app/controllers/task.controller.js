@@ -17,7 +17,7 @@ exports.addTask = async (req, res) => {
             taskName,
             description,
             createdBy,
-            projectID
+            projectId
         } = req.body;
 
         // Generate unique taskId
@@ -34,7 +34,7 @@ exports.addTask = async (req, res) => {
             taskName,
             description,
             createdBy,
-            projectID
+            projectId
         });
 
         await newTask.save();
@@ -45,16 +45,107 @@ exports.addTask = async (req, res) => {
     }
 };
 
+// API dor adding assignee to task
+exports.addAssignee = async (req, res) => {
+    try {
+        console.log("called add assignee");
+
+        const { taskId, assignee } = req.body;
+
+        // Find the task by taskId
+        const task = await Task.findOne({ taskId });
+
+        if (!task) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+
+        // Update the assignee field with the new value
+        task.assignee = assignee;
+
+        // Save the updated task to the database
+        await task.save();
+
+        res.status(200).json({ message: 'Assignee added successfully', taskId });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // API for listing tasks
+
+// exports.listTasks = async (req, res) => {
+//     try {
+//         console.log('called list all tasks');
+//         const tasks = await Task.find();
+//         res.status(200).json(tasks);
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// };
+
 exports.listTasks = async (req, res) => {
     try {
         console.log('called list all tasks');
-        const tasks = await Task.find();
+        const tasks = await Task.aggregate([
+            {
+                $lookup: {
+                    from: 'projects', // The name of the project collection
+                    localField: 'projectId',
+                    foreignField: 'projectId',
+                    as: 'project'
+                }
+            },
+            {
+                $unwind: '$project'
+            },
+            {
+                $project: {
+                    assignee: 1,
+                    createdBy: 1,
+                    _id: 1,
+                    taskId: 1,
+                    status: 1,
+                    planHours: 1,
+                    duration: 1,
+                    startOn: 1,
+                    dueOn: 1,
+                    taskName: 1,
+                    description: 1,
+                    'project.id': '$project.projectId',
+                    'project.name': '$project.projectName',
+                    createdAt: 1,
+                    updatedAt: 1,
+                    __v: 1
+                }
+            }
+        ]);
+
         res.status(200).json(tasks);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
+// API to get ids and names
+exports.listTaskNames = async (req, res) => {
+    try {
+        console.log('called list task names');
+        const tasks = await Task.aggregate([
+            {
+                $project: {
+                    _id: 0,
+                    taskId: 1,
+                    taskName: 1
+                }
+            }
+        ]);
+
+        res.status(200).json(tasks);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 // API for editing tasks
 exports.editTask = async (req, res) => {
@@ -121,11 +212,43 @@ exports.deleteTask = async (req, res) => {
 };
 
 
-
+// API to list as html
 exports.getAlltask = async (req, res) => {
     try {
         console.log('called list all tasks');
-        const tasks = await Task.find();
+        const tasks = await Task.aggregate([
+            {
+                $lookup: {
+                    from: 'projects', // The name of the project collection
+                    localField: 'projectId',
+                    foreignField: 'projectId',
+                    as: 'project'
+                }
+            },
+            {
+                $unwind: '$project'
+            },
+            {
+                $project: {
+                    assignee: 1,
+                    createdBy: 1,
+                    _id: 1,
+                    taskId: 1,
+                    status: 1,
+                    planHours: 1,
+                    duration: 1,
+                    startOn: 1,
+                    dueOn: 1,
+                    taskName: 1,
+                    description: 1,
+                    'project.id': '$project.projectId',
+                    'project.name': '$project.projectName',
+                    createdAt: 1,
+                    updatedAt: 1,
+                    __v: 1
+                }
+            }
+        ]);
         res.render('task', { tasks });
     } catch (error) {
         res.status(500).json({ message: error.message });

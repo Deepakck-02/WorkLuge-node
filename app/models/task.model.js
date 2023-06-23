@@ -13,8 +13,14 @@ const taskSchema = new mongoose.Schema(
             default: 'inactive',
         },
         assignee: {
-            type: String,
-            required: true,
+            name: {
+                type: String,
+                required: false,
+            },
+            id: {
+                type: String,
+                required: false,
+            },
         },
         planHours: {
             type: Number,
