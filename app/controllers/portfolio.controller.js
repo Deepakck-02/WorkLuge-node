@@ -28,6 +28,9 @@ exports.getPortfolioList = async (req, res) => {
     try {
         console.log("called list portfolio");
 
+        const onset = parseInt(req.body.onset); // Get the onset (starting index)
+        const offset = parseInt(req.body.offset); // Get the offset (number of portfolios to retrieve)
+
         const portfolios = await Portfolio.aggregate([
             {
                 $lookup: {
@@ -54,6 +57,12 @@ exports.getPortfolioList = async (req, res) => {
                         }
                     }
                 }
+            },
+            {
+                $skip: onset // Skip the specified number of documents
+            },
+            {
+                $limit: offset // Limit the number of documents in the result
             }
         ]);
 
@@ -62,6 +71,7 @@ exports.getPortfolioList = async (req, res) => {
         res.status(500).send({ message: error.message });
     }
 };
+
 
 // API for listing portfolio ids and name
 

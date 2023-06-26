@@ -86,10 +86,14 @@ exports.addAssignee = async (req, res) => {
 exports.listTasks = async (req, res) => {
     try {
         console.log('called list all tasks');
+
+        const onset = parseInt(req.body.onset); // Get the onset (starting index)
+        const offset = parseInt(req.body.offset); // Get the offset (number of tasks to retrieve)
+
         const tasks = await Task.aggregate([
             {
                 $lookup: {
-                    from: 'projects', // The name of the project collection
+                    from: 'projects',
                     localField: 'projectId',
                     foreignField: 'projectId',
                     as: 'project'
@@ -117,6 +121,12 @@ exports.listTasks = async (req, res) => {
                     updatedAt: 1,
                     __v: 1
                 }
+            },
+            {
+                $skip: onset
+            },
+            {
+                $limit: offset
             }
         ]);
 
@@ -125,6 +135,7 @@ exports.listTasks = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 // API to get ids and names
 exports.listTaskNames = async (req, res) => {

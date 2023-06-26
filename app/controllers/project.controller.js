@@ -41,14 +41,18 @@ exports.addProject = async (req, res) => {
 };
 
 // API for project listing
+
 exports.getProjectList = async (req, res) => {
     try {
-        console.log('called list all project');
+        console.log('called list all projects');
+
+        const onset = parseInt(req.body.onset); // Get the onset (starting index)
+        const offset = parseInt(req.body.offset); // Get the offset (number of projects to get)
 
         const projects = await Project.aggregate([
             {
                 $lookup: {
-                    from: "portfolios", // Replace "portfolios" with the actual collection name for portfolios
+                    from: "portfolios",
                     localField: "portfolioId",
                     foreignField: "portfolioId",
                     as: "portfolio"
@@ -58,6 +62,14 @@ exports.getProjectList = async (req, res) => {
                 $unwind: "$portfolio"
             },
             {
+                $lookup: {
+                    from: "tasks",
+                    localField: "projectId",
+                    foreignField: "projectId",
+                    as: "tasks"
+                }
+            },
+            {
                 $project: {
                     _id: 1,
                     projectId: 1,
@@ -65,14 +77,25 @@ exports.getProjectList = async (req, res) => {
                     projectName: 1,
                     projectDescription: 1,
                     projectDuration: 1,
+                    projectOwner: 1,
                     portfolioId: "$portfolio.portfolioId",
                     portfolioName: "$portfolio.portfolioName",
                     projectedStartDate: 1,
                     projectedCompletionDate: 1,
                     createdAt: 1,
                     updatedAt: 1,
-                    __v: 1
+                    __v: 1,
+                    tasks: {
+                        taskId: 1,
+                        taskName: 1
+                    }
                 }
+            },
+            {
+                $skip: onset
+            },
+            {
+                $limit: offset
             }
         ]);
 
@@ -81,6 +104,47 @@ exports.getProjectList = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// exports.getProjectList = async (req, res) => {
+//     try {
+//         console.log('called list all project');
+//
+//         const projects = await Project.aggregate([
+//             {
+//                 $lookup: {
+//                     from: "portfolios", // Replace "portfolios" with the actual collection name for portfolios
+//                     localField: "portfolioId",
+//                     foreignField: "portfolioId",
+//                     as: "portfolio"
+//                 }
+//             },
+//             {
+//                 $unwind: "$portfolio"
+//             },
+//             {
+//                 $project: {
+//                     _id: 1,
+//                     projectId: 1,
+//                     status: 1,
+//                     projectName: 1,
+//                     projectDescription: 1,
+//                     projectDuration: 1,
+//                     portfolioId: "$portfolio.portfolioId",
+//                     portfolioName: "$portfolio.portfolioName",
+//                     projectedStartDate: 1,
+//                     projectedCompletionDate: 1,
+//                     createdAt: 1,
+//                     updatedAt: 1,
+//                     __v: 1
+//                 }
+//             }
+//         ]);
+//
+//         res.status(200).json(projects);
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// };
 
 // API to list as html
 exports.ProjectList = async (req, res) => {
@@ -217,17 +281,63 @@ exports.getProjectDetails = async (req, res) => {
         console.log('called get single project by id');
         const { projectId } = req.params;
 
-        const project = await Project.findOne({ projectId });
+        const project = await Project.aggregate([
+            {
+                $match: { projectId } // Filter projects by projectId
+            },
+            {
+                $lookup: {
+                    from: "portfolios",
+                    localField: "portfolioId",
+                    foreignField: "portfolioId",
+                    as: "portfolio"
+                }
+            },
+            {
+                $unwind: "$portfolio"
+            },
+            {
+                $lookup: {
+                    from: "tasks",
+                    localField: "projectId",
+                    foreignField: "projectId",
+                    as: "tasks"
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    projectId: 1,
+                    status: 1,
+                    projectName: 1,
+                    projectDescription: 1,
+                    projectDuration: 1,
+                    projectOwner: 1,
+                    portfolioId: "$portfolio.portfolioId",
+                    portfolioName: "$portfolio.portfolioName",
+                    projectedStartDate: 1,
+                    projectedCompletionDate: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    __v: 1,
+                    tasks: {
+                        taskId: 1,
+                        taskName: 1
+                    }
+                }
+            }
+        ]);
 
-        if (!project) {
+        if (project.length === 0) {
             return res.status(404).json({ message: 'Project not found' });
         }
 
-        res.status(200).json({ project });
+        res.status(200).json({ project: project[0] });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 
 

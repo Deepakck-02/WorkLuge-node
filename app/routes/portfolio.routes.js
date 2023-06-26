@@ -8,7 +8,7 @@ const router = express.Router()
 router.route("/list").get(controller.PortfolioList);
 
 // API to get all portfolio
-router.route("/list-all").get(controller.getPortfolioList);
+router.route("/list-all").post(controller.getPortfolioList);
 
 // API to get names and ids
 router.route("/get-list").get(controller.getPortfolioNames);

@@ -47,13 +47,19 @@ exports.listPeople = async (req, res) => {
     try {
         console.log('called list all people');
 
-        const people = await People.find();
-        // res.render('people', { people }); // Render the people.ejs template with the people data
-        res.status(200).json({people});
+        const onset = parseInt(req.body.onset);
+        const offset = parseInt(req.body.offset);
+
+        const people = await People.find()
+            .skip(onset)
+            .limit(offset);
+
+        res.status(200).json({ people });
     } catch (error) {
-        res.status(500).json({message: error.message});
+        res.status(500).json({ message: error.message });
     }
 };
+
 
 // API for listing people as html
 exports.getAllPeople = async (req, res) => {

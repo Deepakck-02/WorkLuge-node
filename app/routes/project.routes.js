@@ -11,7 +11,7 @@ router.route("/list").get(projectController.ProjectList);
 router.route("/get-list").get(projectController.getProjectNames);
 
 // API to get all projects
-router.route("/list-all").get(projectController.getProjectList);
+router.route("/list-all").post(projectController.getProjectList);
 
 // API to get a single project
 router.route("/get-one/:projectId").get(projectController.getProjectDetails);

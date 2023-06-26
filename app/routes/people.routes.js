@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/get-all', peopleController.getAllPeople);
 
 // API to get all people
-router.route('/list-all').get(peopleController.listPeople);
+router.route('/list-all').post(peopleController.listPeople);
 
 // API to get all users with access level as user
 router.route('/list-users').get(peopleController.listUsers);
