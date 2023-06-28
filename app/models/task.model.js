@@ -60,7 +60,7 @@ const taskSchema = new mongoose.Schema(
                 required: true,
             },
         },
-        projectID: {
+        projectId: {
             type: String,
             required: true,
         },

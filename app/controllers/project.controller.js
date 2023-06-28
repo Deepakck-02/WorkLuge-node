@@ -59,7 +59,7 @@ exports.getProjectList = async (req, res) => {
                 }
             },
             {
-                $unwind: "$portfolio"
+                $unwind: { path: "$portfolio", preserveNullAndEmptyArrays: true }
             },
             {
                 $lookup: {

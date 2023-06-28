@@ -26,7 +26,7 @@ router.route("/update/:portfolioId").put(authenticateToken, checkUserRole('manag
 router.route("/update-status/:portfolioId").put(controller.updatePortfolioStatus);
 
 // API to delete a portfolio
-router.route("/delete").delete(authenticateToken, checkUserRole('manager'),controller.deletePortfolio);
+router.route("/delete").post(authenticateToken, checkUserRole('manager'),controller.deletePortfolio);
 
 // API to add projects in a portfolio
 router.route("/add-project/:portfolioId").post(authenticateToken, checkUserRole('manager'),controller.addProjectIdsToPortfolio);

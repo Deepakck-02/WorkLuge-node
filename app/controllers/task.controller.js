@@ -100,7 +100,7 @@ exports.listTasks = async (req, res) => {
                 }
             },
             {
-                $unwind: '$project'
+                $unwind: { path: "$project", preserveNullAndEmptyArrays: true }
             },
             {
                 $project: {
