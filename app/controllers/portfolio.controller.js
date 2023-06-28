@@ -232,21 +232,6 @@ exports.updatePortfolioStatus = async (req, res) => {
 
 // API for Deleting Portfolio
 
-// exports.deletePortfolio = async (req, res) => {
-//     try {
-//         console.log("called delete portfolio");
-//         const { portfolioId } = req.params;
-//
-//         const portfolio = await Portfolio.findOneAndDelete({ portfolioId: portfolioId });
-//         if (!portfolio) {
-//             return res.status(404).json({ error: 'Portfolio not found' });
-//         }
-//         res.json({ message: "Deleted Successfully" });
-//     } catch (error) {
-//         res.status(500).send({ message: error.message });
-//     }
-// };
-
 exports.deletePortfolio = async (req, res) => {
     try {
         console.log("called delete portfolios");

@@ -137,6 +137,60 @@ exports.listTasks = async (req, res) => {
 };
 
 
+// API to get a single task
+exports.getTaskById = async (req, res) => {
+    try {
+        const taskId = req.params.id;
+
+        // Fetch the task with the provided taskId
+        const task = await Task.aggregate([
+            {
+                $match: { taskId: taskId }
+            },
+            {
+                $lookup: {
+                    from: 'projects',
+                    localField: 'projectId',
+                    foreignField: 'projectId',
+                    as: 'project'
+                }
+            },
+            {
+                $unwind: '$project'
+            },
+            {
+                $project: {
+                    assignee: 1,
+                    createdBy: 1,
+                    _id: 1,
+                    taskId: 1,
+                    status: 1,
+                    planHours: 1,
+                    duration: 1,
+                    startOn: 1,
+                    dueOn: 1,
+                    taskName: 1,
+                    description: 1,
+                    'project.id': '$project.projectId',
+                    'project.name': '$project.projectName',
+                    createdAt: 1,
+                    updatedAt: 1,
+                    __v: 1
+                }
+            }
+        ]);
+
+        if (!task || task.length === 0) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+
+        res.status(200).json(task);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
 // API to get ids and names
 exports.listTaskNames = async (req, res) => {
     try {

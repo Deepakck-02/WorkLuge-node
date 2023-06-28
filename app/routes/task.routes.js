@@ -7,6 +7,9 @@ const router = express.Router()
 // API to get all task as html
 router.route("/get-all-task").get(taskController.getAlltask );
 
+// API to get a task by id
+router.route("/get-one/:id").get(taskController.getTaskById );
+
 // API to get all tasks
 router.route("/list-all").post(taskController.listTasks);
 
