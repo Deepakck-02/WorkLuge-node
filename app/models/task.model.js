@@ -12,7 +12,7 @@ const taskSchema = new mongoose.Schema(
             enum: ['active', 'inactive'],
             default: 'inactive',
         },
-        assignee: {
+        assignee: [{
             name: {
                 type: String,
                 required: false,
@@ -21,7 +21,7 @@ const taskSchema = new mongoose.Schema(
                 type: String,
                 required: false,
             },
-        },
+        }],
         planHours: {
             type: Number,
             required: true,

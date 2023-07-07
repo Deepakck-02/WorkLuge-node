@@ -29,6 +29,7 @@ const peopleSchema = new mongoose.Schema(
         },
         accessLevel: {
             type: String,
+            enum: ['user', 'manager'],
             required: true,
         },
         jobInfo: {

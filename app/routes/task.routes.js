@@ -8,7 +8,7 @@ const router = express.Router()
 router.route("/get-all-task").get(taskController.getAlltask );
 
 // API to get a task by id
-router.route("/get-one/:id").get(taskController.getTaskById );
+router.route("/get-one/:taskId").get(taskController.getTaskById );
 
 // API to get all tasks
 router.route("/list-all").post(taskController.listTasks);
@@ -22,6 +22,12 @@ router.route("/add").post(authenticateToken, checkUserRole('manager'),taskContro
 // API to add and update assignee in task
 router.route("/add-assignee").post(authenticateToken, checkUserRole('manager'),taskController.addAssignee);
 
+// API to update assignees in a task
+router.route("/update-assignee").post(authenticateToken, checkUserRole('manager'),taskController.updateAssignees);
+
+// API to remove the selected assignees
+router.route("/remove-assignee").post(authenticateToken, checkUserRole('manager'),taskController.removeAssignees );
+
 // API to edit a task
 router.route("/edit/:taskId").put(authenticateToken, checkUserRole('manager'),taskController.editTask);
 
@@ -29,7 +35,7 @@ router.route("/edit/:taskId").put(authenticateToken, checkUserRole('manager'),ta
 router.route("/update-status/:taskId").put(taskController.updateTaskStatus);
 
 // API to delete a task
-router.route("/delete/:taskId").delete(authenticateToken, checkUserRole('manager'),taskController.deleteTask);
+router.route("/delete/").post(authenticateToken, checkUserRole('manager'),taskController.deleteTasks);
 
 
 module.exports = router

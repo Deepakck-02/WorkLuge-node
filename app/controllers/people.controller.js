@@ -81,7 +81,7 @@ exports.listUsers = async (req, res) => {
 
         const people = await People.aggregate([
             {
-                $match: {accessLevel: 'User'}
+                $match: {accessLevel: 'user'}
             },
             {
                 $project: {
@@ -106,7 +106,7 @@ exports.listManager = async (req, res) => {
 
         const people = await People.aggregate([
             {
-                $match: {accessLevel: 'Manager'}
+                $match: {accessLevel: 'manager'}
             },
             {
                 $project: {

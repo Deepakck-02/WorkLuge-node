@@ -50,10 +50,16 @@ exports.getPortfolioList = async (req, res) => {
                     createdAt: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S.%LZ", date: "$createdAt" } },
                     updatedAt: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S.%LZ", date: "$updatedAt" } },
                     projects: {
-                        $map: {
-                            input: "$projects",
-                            as: "project",
-                            in: { id: "$$project.projectId", name: "$$project.projectName" }
+                        $cond: {
+                            if: { $eq: ["$projects", []] },
+                            then: [],
+                            else: {
+                                $map: {
+                                    input: "$projects",
+                                    as: "project",
+                                    in: { id: "$$project.projectId", name: "$$project.projectName" }
+                                }
+                            }
                         }
                     }
                 }
@@ -123,12 +129,19 @@ exports.getPortfolioById = async (req, res) => {
                     createdAt: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S.%LZ", date: "$createdAt" } },
                     updatedAt: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S.%LZ", date: "$updatedAt" } },
                     projects: {
-                        $map: {
-                            input: "$projects",
-                            as: "project",
-                            in: { id: "$$project.projectId", name: "$$project.projectName" }
+                        $cond: {
+                            if: { $eq: ["$projects", []] },
+                            then: [],
+                            else: {
+                                $map: {
+                                    input: "$projects",
+                                    as: "project",
+                                    in: { id: "$$project.projectId", name: "$$project.projectName" }
+                                }
+                            }
                         }
                     }
+
                 }
             }
         ]);

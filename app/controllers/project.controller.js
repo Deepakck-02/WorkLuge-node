@@ -78,8 +78,13 @@ exports.getProjectList = async (req, res) => {
                     projectDescription: 1,
                     projectDuration: 1,
                     projectOwner: 1,
-                    portfolioId: "$portfolio.portfolioId",
-                    portfolioName: "$portfolio.portfolioName",
+                    portfolio: {
+                        $cond: {
+                            if: { $eq: ["$portfolio", null] },
+                            then: { portfolioId: "", portfolioName: "" },
+                            else: { portfolioId: "$portfolio.portfolioId", portfolioName: "$portfolio.portfolioName" }
+                        }
+                    },
                     projectedStartDate: 1,
                     projectedCompletionDate: 1,
                     createdAt: 1,
@@ -254,7 +259,10 @@ exports.getProjectDetails = async (req, res) => {
                 }
             },
             {
-                $unwind: "$portfolio"
+                $unwind: {
+                    path: "$portfolio",
+                    preserveNullAndEmptyArrays: true
+                }
             },
             {
                 $lookup: {
@@ -273,8 +281,13 @@ exports.getProjectDetails = async (req, res) => {
                     projectDescription: 1,
                     projectDuration: 1,
                     projectOwner: 1,
-                    portfolioId: "$portfolio.portfolioId",
-                    portfolioName: "$portfolio.portfolioName",
+                    portfolio: {
+                        $cond: {
+                            if: { $eq: ["$portfolio", null] },
+                            then: { portfolioId: "", portfolioName: "" },
+                            else: { portfolioId: "$portfolio.portfolioId", portfolioName: "$portfolio.portfolioName" }
+                        }
+                    },
                     projectedStartDate: 1,
                     projectedCompletionDate: 1,
                     createdAt: 1,

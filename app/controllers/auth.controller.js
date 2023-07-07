@@ -107,7 +107,7 @@ exports.getAllUsers = async (req, res) => {
     try {
         console.log('called get all users');
 
-        const users = await User.find();
+        const users = await User.find({}, { password: 0 });
 
         if (!users || users.length === 0) {
             return res.status(404).json({ message: 'No users found' });
