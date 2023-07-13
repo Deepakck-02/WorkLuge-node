@@ -76,7 +76,7 @@ exports.login = async (req, res) => {
         // Generate and sign a JWT token
         const token = jwt.sign({ userId: user.userId, role: user.role }, 'workluge-secret-key');
 
-        res.status(200).json({ message: 'Login successful',role: user.role, token });
+        res.status(200).json({ message: 'Login successful',role: user.role , token });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

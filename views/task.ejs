@@ -13,27 +13,28 @@
             <th>Created By</th>
             <th>Project Name</th>
             <th>Project Id</th>
-
         </tr>
         </thead>
         <tbody>
         <% tasks.forEach(task => { %>
-            <tr>
-                <td><%= task.taskId %></td>
-                <td><%= task.taskName %></td>
-                <td><%= task.status %></td>
-                <td><%= task.assignee.name %></td>
-                <td><%= task.assignee.id %></td>
-                <td><%= task.createdBy.name %></td>
-                <td><%= task.project.name %></td>
-                <td><%= task.project.id %></td>
-
-            </tr>
+            <% task.assignee.forEach(assignee => { %>
+                <tr>
+                    <td><%= task.taskId %></td>
+                    <td><%= task.taskName %></td>
+                    <td><%= task.status %></td>
+                    <td><%= assignee.name %></td>
+                    <td><%= assignee.id %></td>
+                    <td><%= task.createdBy.name %></td>
+                    <td><%= task.project.name %></td>
+                    <td><%= task.project.id %></td>
+                </tr>
+            <% }); %>
         <% }); %>
         </tbody>
     </table>
 </div>
 </body>
+
 
 
 
