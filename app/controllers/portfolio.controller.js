@@ -47,6 +47,7 @@ exports.getPortfolioList = async (req, res) => {
                     portfolioDescription: 1,
                     status: 1,
                     portfolioName: 1,
+                    portfolioManager: 1,
                     createdAt: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S.%LZ", date: "$createdAt" } },
                     updatedAt: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S.%LZ", date: "$updatedAt" } },
                     projects: {
@@ -126,6 +127,7 @@ exports.getPortfolioById = async (req, res) => {
                     portfolioDescription: 1,
                     status: 1,
                     portfolioName: 1,
+                    portfolioManager: 1,
                     createdAt: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S.%LZ", date: "$createdAt" } },
                     updatedAt: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S.%LZ", date: "$updatedAt" } },
                     projects: {
@@ -200,7 +202,7 @@ exports.updatePortfolio = async (req, res) => {
         console.log('called update portfolio');
 
         const { portfolioId } = req.params;
-        const { portfolioDescription, status, portfolioName, projectId } = req.body;
+        const { portfolioDescription, status, portfolioName, projectId, portfolioManager } = req.body;
 
         const portfolio = await Portfolio.findOne({ portfolioId });
 
@@ -212,14 +214,29 @@ exports.updatePortfolio = async (req, res) => {
         portfolio.status = status;
         portfolio.portfolioName = portfolioName;
         portfolio.projectId.ids = projectId.ids;
+        portfolio.portfolioManager = {
+            _id: portfolioManager._id,
+            name: portfolioManager.name
+        };
 
         await portfolio.save();
 
-        res.json({ message: "Successfully updated" });
+        // Remove portfolioId and projects from the updated portfolio object
+        const updatedPortfolio = {
+            portfolioDescription: portfolio.portfolioDescription,
+            status: portfolio.status,
+            portfolioName: portfolio.portfolioName,
+            projectId: { ids: portfolio.projectId.ids },
+            portfolioManager: portfolio.portfolioManager
+        };
+
+        res.json({ message: "Successfully updated", portfolio: updatedPortfolio });
     } catch (error) {
         res.status(500).send({ message: error.message });
     }
 };
+
+
 
 // API for updating status of portfolio
 exports.updatePortfolioStatus = async (req, res) => {
